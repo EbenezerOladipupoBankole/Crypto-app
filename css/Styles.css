@@ -1,0 +1,1069 @@
+/* ===================================
+   CSS Variables & Reset
+   =================================== */
+:root {
+    --color-bg-primary: #0B0F19;
+    --color-bg-secondary: #1F2937;
+    --color-bg-tertiary: #374151;
+    --color-accent-blue: #3A7AFE;
+    --color-success: #16C784;
+    --color-danger: #EA3943;
+    --color-text-primary: #E5E7EB;
+    --color-text-secondary: #9CA3AF;
+    --color-border: #374151;
+    
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --transition: all 0.3s ease;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===================================
+   Utility Classes
+   =================================== */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.hide-mobile {
+    display: table-cell;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none;
+    }
+}
+
+/* ===================================
+   Header
+   =================================== */
+.header {
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.logo h1 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--color-accent-blue), #9333EA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.mobile-menu-btn span {
+    width: 24px;
+    height: 3px;
+    background-color: var(--color-text-primary);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+}
+
+/* ===================================
+   Navigation
+   =================================== */
+.nav {
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 73px;
+    z-index: 99;
+}
+
+.nav-list {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0.5rem 0;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.nav-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.nav-btn.active {
+    background-color: var(--color-accent-blue);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .nav {
+        display: none;
+    }
+    
+    .nav.active {
+        display: block;
+    }
+    
+    .nav-list {
+        flex-direction: column;
+    }
+}
+
+/* ===================================
+   Main Content
+   =================================== */
+.main {
+    padding: 2rem 0;
+    min-height: calc(100vh - 200px);
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+/* ===================================
+   Summary Cards
+   =================================== */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-blue {
+    background: linear-gradient(135deg, #3A7AFE, #2563EB);
+    color: white;
+}
+
+.card-gradient-green {
+    background: linear-gradient(135deg, #16C784, #059669);
+    color: white;
+}
+
+.card-gradient-red {
+    background: linear-gradient(135deg, #EA3943, #DC2626);
+    color: white;
+}
+
+.card-gradient-purple {
+    background: linear-gradient(135deg, #9333EA, #7C3AED);
+    color: white;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.card-percent {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+/* ===================================
+   Section Cards
+   =================================== */
+.section-card {
+    background-color: var(--color-bg-secondary);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+/* ===================================
+   Holdings List
+   =================================== */
+.holdings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.holding-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: var(--color-bg-tertiary);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    animation: slideInLeft 0.5s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.holding-item:hover {
+    background-color: #4B5563;
+    transform: translateX(4px);
+}
+
+.holding-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.holding-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.holding-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.holding-amount {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+.holding-stats {
+    text-align: right;
+}
+
+.holding-value {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.holding-pnl {
+    font-size: 0.85rem;
+}
+
+.holding-pnl.positive {
+    color: var(--color-success);
+}
+
+.holding-pnl.negative {
+    color: var(--color-danger);
+}
+
+/* ===================================
+   Transactions List
+   =================================== */
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background-color: var(--color-bg-tertiary);
+    border-radius: 0.5rem;
+}
+
+.transaction-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.transaction-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transaction-icon.buy {
+    background-color: rgba(22, 199, 132, 0.2);
+    color: var(--color-success);
+}
+
+.transaction-icon.sell {
+    background-color: rgba(234, 57, 67, 0.2);
+    color: var(--color-danger);
+}
+
+.transaction-details {
+    font-size: 0.9rem;
+}
+
+.transaction-type {
+    font-weight: 600;
+}
+
+.transaction-date {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.transaction-amounts {
+    text-align: right;
+    font-size: 0.9rem;
+}
+
+.transaction-amount {
+    font-weight: 600;
+}
+
+.transaction-total {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+/* ===================================
+   Search
+   =================================== */
+.search-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-secondary);
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: 0.75rem;
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-accent-blue);
+    box-shadow: 0 0 0 3px rgba(58, 122, 254, 0.1);
+}
+
+/* ===================================
+   Market Table
+   =================================== */
+.table-container {
+    overflow-x: auto;
+}
+
+.market-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.market-table thead {
+    background-color: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.market-table th {
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.market-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.market-table tbody tr {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.market-table tbody tr:hover {
+    background-color: var(--color-bg-tertiary);
+}
+
+.coin-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.coin-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.coin-name-cell {
+    font-weight: 600;
+}
+
+.coin-symbol-cell {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    display: block;
+}
+
+.price-positive {
+    color: var(--color-success);
+}
+
+.price-negative {
+    color: var(--color-danger);
+}
+
+/* ===================================
+   Coin Details
+   =================================== */
+.coin-details {
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--color-accent-blue);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.back-btn:hover {
+    color: #2563EB;
+    transform: translateX(-4px);
+}
+
+.coin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.coin-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.coin-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+}
+
+.coin-name {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.coin-symbol {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+}
+
+.coin-price-info {
+    text-align: right;
+}
+
+.coin-price {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.coin-change {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* ===================================
+   Trade Buttons
+   =================================== */
+.trade-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-buy {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.btn-buy:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn-buy:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-sell {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-sell:hover {
+    background-color: #DC2626;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn-sell:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    width: 100%;
+    background-color: var(--color-accent-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563EB;
+}
+
+/* ===================================
+   Charts
+   =================================== */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-top: 1rem;
+}
+
+/* ===================================
+   Stats Grid
+   =================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background-color: var(--color-bg-secondary);
+    padding: 1rem;
+    border-radius: 0.75rem;
+}
+
+.label {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.value {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.holding-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+/* ===================================
+   Modal
+   =================================== */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-content {
+    background-color: var(--color-bg-secondary);
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: scaleIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modal-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    color: var(--color-text-primary);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--color-bg-tertiary);
+    border: 2px solid var(--color-border);
+    border-radius: 0.75rem;
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-accent-blue);
+    box-shadow: 0 0 0 3px rgba(58, 122, 254, 0.1);
+}
+
+.input-hint {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+.trade-summary {
+    background-color: var(--color-bg-tertiary);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.trade-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.trade-row:not(:last-child) {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.trade-row span:last-child {
+    font-weight: 600;
+}
+
+/* ===================================
+   Toast Notification
+   =================================== */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    background-color: var(--color-bg-secondary);
+    border-left: 4px solid var(--color-accent-blue);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-lg);
+    transform: translateX(400px);
+    transition: var(--transition);
+    z-index: 1001;
+    max-width: 400px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    border-left-color: var(--color-success);
+}
+
+.toast.error {
+    border-left-color: var(--color-danger);
+}
+
+/* ===================================
+   Loading States
+   =================================== */
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--color-text-secondary);
+}
+
+.loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(11, 15, 25, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--color-border);
+    border-top-color: var(--color-accent-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===================================
+   News List
+   =================================== */
+.news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.news-item {
+    padding: 1rem;
+    background-color: var(--color-bg-tertiary);
+    border-radius: 0.75rem;
+    border-left: 3px solid var(--color-accent-blue);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.news-item:hover {
+    background-color: #4B5563;
+    transform: translateX(4px);
+}
+
+.news-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+}
+
+.news-description {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.news-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.news-source {
+    font-weight: 500;
+}
+
+.news-date {
+    opacity: 0.7;
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+@media (max-width: 768px) {
+    .logo h1 {
+        font-size: 1.2rem;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card-value {
+        font-size: 1.5rem;
+    }
+
+    .coin-header {
+        flex-direction: column;
+    }
+
+    .coin-price-info {
+        text-align: left;
+    }
+
+    .trade-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .coin-name {
+        font-size: 1.5rem;
+    }
+
+    .coin-price {
+        font-size: 1.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
