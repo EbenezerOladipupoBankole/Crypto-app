@@ -159,13 +159,8 @@ function switchTab(tabName) {
         content.classList.remove('active');
     });
     
-    if (tabName === 'dashboard') {
-        document.getElementById('dashboardTab').classList.add('active');
-    } else if (tabName === 'market') {
-        document.getElementById('marketTab').classList.add('active');
-    } else if (tabName === 'news') {
-        document.getElementById('newsTab').classList.add('active');
-    }
+    const activeTabContent = document.getElementById(`${tabName}Tab`);
+    if (activeTabContent) activeTabContent.classList.add('active');
     
     // Close mobile menu
     document.getElementById('mainNav').classList.remove('active');
