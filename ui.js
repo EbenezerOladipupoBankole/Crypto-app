@@ -48,22 +48,65 @@ export function updateDashboard(portfolio, coins) {
     const totalValue = portfolio.calculateTotalValue(coins);
     const pnl = portfolio.calculateProfitLoss(coins);
     
-    // Update total value
-    document.getElementById('totalValue').textContent = formatCurrency(totalValue);
+    // Update total value (animated)
+    const totalEl = document.getElementById('totalValue');
+    animateCurrency(totalEl, parseFloat(totalEl?.dataset?.value) || 0, totalValue, 700);
     
     // Update profit/loss
     const profitLossCard = document.getElementById('profitLossCard');
     const profitLossEl = document.getElementById('profitLoss');
     const profitLossPercentEl = document.getElementById('profitLossPercent');
     
-    profitLossEl.textContent = formatCurrency(Math.abs(pnl.amount));
+    // profit/loss animate; show sign via data attribute
+    animateCurrency(profitLossEl, parseFloat(profitLossEl?.dataset?.value) || 0, Math.abs(pnl.amount), 700);
+    profitLossEl.dataset.sign = pnl.isProfit ? '+' : '-';
+    if (pnl.amount >= 0) profitLossEl.classList.add('positive'); else profitLossEl.classList.remove('positive');
     profitLossPercentEl.textContent = `${pnl.isProfit ? '+' : '-'}${Math.abs(pnl.percent).toFixed(2)}%`;
     
     // Update card color
     profitLossCard.className = pnl.isProfit ? 'card card-gradient-green' : 'card card-gradient-red';
     
     // Update cash balance
-    document.getElementById('cashBalance').textContent = formatCurrency(portfolio.getBalance());
+    const cashEl = document.getElementById('cashBalance');
+    animateCurrency(cashEl, parseFloat(cashEl?.dataset?.value) || 0, portfolio.getBalance(), 700);
+
+    // Update hero stats if present
+    const heroPortfolio = document.getElementById('heroPortfolioValue');
+    const heroPnL = document.getElementById('heroPnL');
+    if (heroPortfolio) {
+        animateCurrency(heroPortfolio, parseFloat(heroPortfolio?.dataset?.value) || 0, totalValue, 800);
+    }
+    if (heroPnL) {
+        animateCurrency(heroPnL, parseFloat(heroPnL?.dataset?.value) || 0, Math.abs(pnl.amount), 800);
+        heroPnL.dataset.sign = pnl.amount >= 0 ? '+' : '-';
+        if (pnl.amount >= 0) heroPnL.classList.add('positive'); else heroPnL.classList.remove('positive');
+    }
+}
+
+/**
+ * Animate currency numbers
+ * @param {HTMLElement} el
+ * @param {number} from
+ * @param {number} to
+ * @param {number} duration
+ */
+export function animateCurrency(el, from, to, duration = 700) {
+    if (!el) return;
+    const start = performance.now();
+    const diff = to - from;
+    function tick(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = t * (2 - t);
+        const current = from + diff * eased;
+        el.textContent = formatCurrency(current);
+        el.dataset.value = current.toString();
+        if (t < 1) requestAnimationFrame(tick);
+        else {
+            el.textContent = formatCurrency(to);
+            el.dataset.value = to.toString();
+        }
+    }
+    requestAnimationFrame(tick);
 }
 
 /**
@@ -155,99 +198,6 @@ export function renderTransactions() {
 }
 
 /**
- * Render market table
- * @param {Array} coins - Coin data
- * @param {Function} onCoinClick - Click handler
- */
-export function renderMarketTable(coins, onCoinClick) {
-    const tbody = document.getElementById('marketTableBody');
-    
-    if (coins.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading-state">No data available</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = '';
-    
-    coins.forEach((coin, index) => {
-        const row = document.createElement('tr');
-        row.onclick = () => onCoinClick(coin);
-        
-        const changeClass = coin.price_change_percentage_24h >= 0 ? 'price-positive' : 'price-negative';
-        
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>
-                <div class="coin-cell">
-                    <img src="${coin.image}" alt="${coin.name}" class="coin-img">
-                    <div>
-                        <div class="coin-name-cell">${coin.name}</div>
-                        <span class="coin-symbol-cell">${coin.symbol.toUpperCase()}</span>
-                    </div>
-                </div>
-            </td>
-            <td class="text-right">${formatCurrency(coin.current_price)}</td>
-            <td class="text-right ${changeClass}">
-                ${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%
-            </td>
-            <td class="text-right hide-mobile">$${formatNumber(coin.market_cap)}</td>
-            <td class="text-right hide-mobile">$${formatNumber(coin.total_volume)}</td>
-        `;
-        
-        tbody.appendChild(row);
-    });
-}
-
-/**
- * Render coin details page
- * @param {Object} coin - Coin data
- * @param {Object} portfolio - Portfolio instance
- */
-export function renderCoinDetails(coin, portfolio) {
-    // Basic info
-    document.getElementById('coinImage').src = coin.image;
-    document.getElementById('coinImage').alt = coin.name;
-    document.getElementById('coinName').textContent = coin.name;
-    document.getElementById('coinSymbol').textContent = coin.symbol.toUpperCase();
-    document.getElementById('coinPrice').textContent = formatCurrency(coin.current_price);
-    
-    const changeEl = document.getElementById('coinChange');
-    const changeClass = coin.price_change_percentage_24h >= 0 ? 'price-positive' : 'price-negative';
-    changeEl.className = `coin-change ${changeClass}`;
-    changeEl.textContent = `${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%`;
-    
-    // Stats
-    document.getElementById('statMarketCap').textContent = '$' + formatNumber(coin.market_cap);
-    document.getElementById('statVolume').textContent = '$' + formatNumber(coin.total_volume);
-    document.getElementById('statHigh').textContent = formatCurrency(coin.high_24h);
-    document.getElementById('statLow').textContent = formatCurrency(coin.low_24h);
-    
-    // Holdings info
-    const holding = portfolio.getHolding(coin.id);
-    const holdingInfo = document.getElementById('coinHoldingInfo');
-    
-    if (holding) {
-        holdingInfo.style.display = 'block';
-        const pnlData = portfolio.calculateHoldingPnL(coin.id, coin.current_price);
-        
-        document.getElementById('holdingAmount').textContent = 
-            `${holding.amount.toFixed(6)} ${coin.symbol.toUpperCase()}`;
-        document.getElementById('holdingAvgPrice').textContent = formatCurrency(holding.avgPrice);
-        document.getElementById('holdingValue').textContent = formatCurrency(pnlData.currentValue);
-        
-        const pnlEl = document.getElementById('holdingPnL');
-        pnlEl.textContent = `${pnlData.isProfit ? '+' : ''}${formatCurrency(pnlData.pnl)} (${pnlData.pnlPercent.toFixed(2)}%)`;
-        pnlEl.className = `value ${pnlData.isProfit ? 'price-positive' : 'price-negative'}`;
-        
-        // Enable sell button
-        document.getElementById('sellBtn').disabled = false;
-    } else {
-        holdingInfo.style.display = 'none';
-        document.getElementById('sellBtn').disabled = true;
-    }
-}
-
-/**
  * Render price chart
  * @param {Array} chartData - Chart data points
  */
@@ -331,38 +281,6 @@ export function renderChart(chartData) {
                 intersect: false
             }
         }
-    });
-}
-
-/**
- * Render news articles
- * @param {Array} articles - News articles
- */
-export function renderNews(articles) {
-    const container = document.getElementById('newsList');
-    
-    if (articles.length === 0) {
-        container.innerHTML = '<p class="empty-state">No news available</p>';
-        return;
-    }
-    
-    container.innerHTML = '';
-    
-    articles.forEach(article => {
-        const item = document.createElement('div');
-        item.className = 'news-item';
-        item.onclick = () => window.open(article.url, '_blank');
-        
-        item.innerHTML = `
-            <h3 class="news-title">${article.title}</h3>
-            <p class="news-description">${article.description || 'No description available'}</p>
-            <div class="news-meta">
-                <span class="news-source">${article.source.name}</span>
-                <span class="news-date">${formatDate(article.publishedAt)}</span>
-            </div>
-        `;
-        
-        container.appendChild(item);
     });
 }
 

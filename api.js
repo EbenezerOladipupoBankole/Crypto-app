@@ -16,6 +16,49 @@ const cache = {
     news: { data: null, timestamp: 0 }
 };
 
+// Selected currency for display
+let selectedCurrency = 'USD';
+
+export function setCurrency(code) {
+    selectedCurrency = code;
+}
+
+export function getCurrency() {
+    return selectedCurrency;
+}
+
+/**
+ * Generic fetch function with in-memory caching.
+ * @param {string} cacheKey - The key to use for the cache object (e.g., 'coins', 'news').
+ * @param {string} url - The URL to fetch data from.
+ * @param {Function} [fallbackFn] - An optional function to call for fallback data on error.
+ * @returns {Promise<any>} The fetched or cached data.
+ */
+async function fetchWithCache(cacheKey, url, fallbackFn = () => []) {
+    const now = Date.now();
+    const cachedItem = cache[cacheKey];
+
+    // Return cached data if it's still valid
+    if (cachedItem.data && now - cachedItem.timestamp < API_CONFIG.CACHE_DURATION) {
+        return cachedItem.data;
+    }
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Update cache
+        cache[cacheKey] = { data: data.articles || data, timestamp: now };
+        return data.articles || data;
+    } catch (error) {
+        console.error(`Error fetching ${cacheKey}:`, error);
+        return fallbackFn() || cachedItem.data || []; // Return fallback, then stale cache, then empty array
+    }
+}
+
 /**
  * Fetch top cryptocurrencies by market cap
  * @returns {Promise<Array>} Array of cryptocurrency data
@@ -25,30 +68,8 @@ export async function fetchCoins() {
     if (cache.coins.data && Date.now() - cache.coins.timestamp < API_CONFIG.CACHE_DURATION) {
         return cache.coins.data;
     }
-
-    try {
-        const response = await fetch(
-            `${API_CONFIG.COINGECKO_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h`
-        );
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        // Update cache
-        cache.coins = {
-            data: data,
-            timestamp: Date.now()
-        };
-
-        return data;
-    } catch (error) {
-        console.error('Error fetching coins:', error);
-        // Return cached data if available, even if expired
-        return cache.coins.data || [];
-    }
+    const url = `${API_CONFIG.COINGECKO_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h`;
+    return fetchWithCache('coins', url);
 }
 
 /**
@@ -94,33 +115,8 @@ export async function fetchCryptoNews() {
     if (cache.news.data && Date.now() - cache.news.timestamp < API_CONFIG.CACHE_DURATION) {
         return cache.news.data;
     }
-
-    try {
-        // Using GNews API (free tier available)
-        // You need to sign up at https://gnews.io/ and get your API key
-        const response = await fetch(
-            `${API_CONFIG.NEWSAPI_BASE}/search?q=cryptocurrency&lang=en&max=10&apikey=${API_CONFIG.NEWSAPI_KEY}`
-        );
-
-        if (!response.ok) {
-            // If API fails, return mock data
-            return getMockNews();
-        }
-
-        const data = await response.json();
-        
-        // Update cache
-        cache.news = {
-            data: data.articles || [],
-            timestamp: Date.now()
-        };
-
-        return data.articles || [];
-    } catch (error) {
-        console.error('Error fetching news:', error);
-        // Return mock data on error
-        return getMockNews();
-    }
+    const url = `${API_CONFIG.NEWSAPI_BASE}/search?q=cryptocurrency&lang=en&max=10&apikey=${API_CONFIG.NEWSAPI_KEY}`;
+    return fetchWithCache('news', url, getMockNews);
 }
 
 /**
@@ -191,12 +187,23 @@ export function formatNumber(num) {
  * @returns {string} Formatted currency string
  */
 export function formatCurrency(value) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(value);
+    try {
+        // Use the selected currency (falls back to USD)
+        return new Intl.NumberFormat(undefined, {
+            style: 'currency',
+            currency: selectedCurrency || 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value);
+    } catch (err) {
+        // Fallback
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value);
+    }
 }
 
 /**

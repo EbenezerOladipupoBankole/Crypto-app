@@ -15,9 +15,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     
-    <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -40,6 +37,15 @@
                         </svg>
                     </div>
                     <h1>Crypto Trade Master</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="profileBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu">
+                        <img src="https://avatars.dicebear.com/api/identicon/trader.svg" alt="Profile" class="profile-avatar">
+                    </button>
+                    <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
+                        <a href="#" role="menuitem" id="profileSettings">Settings</a>
+                        <a href="#" role="menuitem" id="profileReset">Reset Portfolio</a>
+                    </div>
                 </div>
                 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
                     <span></span>
@@ -96,6 +102,26 @@
         <div class="container">
             <!-- Dashboard Tab -->
             <section id="dashboardTab" class="tab-content active">
+                <div class="dashboard-hero">
+                    <div class="hero-content">
+                        <h2>Welcome back, Trader</h2>
+                        <p class="hero-subtext">Monitor your portfolio, discover market movers, and practice trading — all in a safe environment.</p>
+                        <div class="hero-actions">
+                            <button id="heroTradeBtn" class="btn btn-primary">Trade Now</button>
+                            <button id="heroGainersBtn" class="btn">Top Gainers</button>
+                        </div>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="stat-label">Portfolio</div>
+                            <div id="heroPortfolioValue" class="stat-value">$100,000</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="stat-label">Profit/Loss</div>
+                            <div id="heroPnL" class="stat-value">$0.00</div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Portfolio Summary Cards -->
                 <div class="summary-cards">
                     <div class="card card-gradient-blue">
@@ -157,6 +183,22 @@
 
             <!-- Market Tab -->
             <section id="marketTab" class="tab-content">
+                <!-- Market Summary -->
+                <div class="market-summary-cards">
+                    <div class="stat-card">
+                        <div class="label">Total Market Cap</div>
+                        <div id="totalMarketCap" class="value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">24h Volume</div>
+                        <div id="totalVolume24h" class="value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">BTC Dominance</div>
+                        <div id="btcDominance" class="value">--</div>
+                    </div>
+                </div>
+
                 <div class="search-container">
                     <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -176,20 +218,38 @@
                         <table class="market-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Coin</th>
-                                    <th class="text-right">Price</th>
-                                    <th class="text-right">24h %</th>
-                                    <th class="text-right hide-mobile">Market Cap</th>
-                                    <th class="text-right hide-mobile">Volume</th>
+                                    <th class="watchlist-star-col"></th>
+                                    <th data-sort="market_cap_rank">#<span class="sort-indicator"></span></th>
+                                    <th data-sort="name">Coin<span class="sort-indicator"></span></th>
+                                    <th class="text-right" data-sort="current_price">Price<span class="sort-indicator"></span></th>
+                                    <th class="text-right" data-sort="price_change_percentage_24h">24h %<span class="sort-indicator"></span></th>
+                                    <th class="text-right hide-mobile">7d Chart</th>
+                                    <th class="text-right hide-mobile" data-sort="market_cap">Market Cap<span class="sort-indicator"></span></th>
+                                    <th class="text-right hide-mobile" data-sort="total_volume">Volume<span class="sort-indicator"></span></th>
                                 </tr>
                             </thead>
                             <tbody id="marketTableBody">
                                 <tr>
-                                    <td colspan="6" class="loading-state">Loading market data...</td>
+                                    <td colspan="8" class="loading-state">Loading market data...</td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div class="pagination-controls" id="paginationControls">
+                        <button class="pagination-btn" id="prevPageBtn" disabled>&laquo; Previous</button>
+                        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                        <button class="pagination-btn" id="nextPageBtn">Next &raquo;</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Watchlist Tab -->
+            <section id="watchlistTab" class="tab-content">
+                <div class="section-card">
+                    <h2 class="section-title">Your Watchlist</h2>
+                    <div id="watchlistContainer">
+                        <!-- Watchlist items will be rendered here by JavaScript -->
                     </div>
                 </div>
             </section>
@@ -336,6 +396,46 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="settingsClose" aria-label="Close settings">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="currencySelect">Currency</label>
+                    <select id="currencySelect" class="form-input">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                        <option value="JPY">JPY - Japanese Yen</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="themeToggle">Theme</label>
+                    <div>
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="switch-slider"></span>
+                        </label>
+                        <span id="themeLabel" style="margin-left:8px">Dark</span>
+                    </div>
+                </div>
+                <div style="margin-top:1rem; display:flex; gap:0.75rem;">
+                    <button id="saveSettings" class="btn btn-primary">Save</button>
+                    <button id="cancelSettings" class="btn">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript Modules -->
