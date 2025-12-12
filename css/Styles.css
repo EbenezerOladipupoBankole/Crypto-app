@@ -18,9 +18,11 @@
     --transition: all 0.3s ease;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+    --shadow-medium: 0 6px 16px rgba(0,0,0,0.12);
     --glass-border: rgba(255,255,255,0.04);
     --glass-bg: rgba(255,255,255,0.02);
     --muted: rgba(229,231,235,0.12);
+    --background-light: rgba(255,255,255,0.03);
 }
 
 * {
@@ -273,6 +275,63 @@ body {
 .card:hover {
     transform: translateY(-6px) scale(1.005);
     box-shadow: var(--shadow-lg);
+}
+
+/* --- 3D Flip Card (Advanced CSS) --- */
+.card-flip {
+    perspective: 1200px;
+}
+.card-flip .flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(.2,.9,.2,1);
+    transform-style: preserve-3d;
+}
+.card-flip:hover .flip-inner {
+    transform: rotateY(180deg);
+}
+.flip-front, .flip-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+}
+.flip-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Animated hero gradient */
+.dashboard-hero .hero-content {
+    background: linear-gradient(90deg, rgba(58,122,254,0.06), rgba(147,51,234,0.04));
+    padding: 1rem;
+    border-radius: 12px;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Mini sparkline draw animation */
+.mini-chart polyline {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 0.9s ease forwards;
+}
+@keyframes drawLine {
+    to { stroke-dashoffset: 0; }
 }
 
 .card-gradient-blue {
