@@ -1,0 +1,93 @@
+/* --- Keyframe Animations --- */
+
+/* Fade in and slide up animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modal content slide down animation */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toast notification slide in from bottom */
+@keyframes toast-in {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Toast notification slide out to bottom */
+@keyframes toast-out {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+
+/* --- Applying Animations & Transitions --- */
+
+/* 1. Card entrance animation */
+.summary-cards .card, .section-card, .market-summary-cards .stat-card {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* 2. Modal slide-in animation */
+.modal.active .modal-content {
+    animation: slideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* 3. Market table row hover effect */
+.market-table tbody tr {
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+}
+
+.market-table tbody tr:hover {
+    transform: translateY(-2px);
+    background-color: var(--background-light);
+    cursor: pointer;
+}
+
+/* 4. Button hover effect */
+.btn, .nav-btn, .pagination-btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover, .pagination-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+/* 5. Toast notification animation */
+.toast.show {
+    animation: toast-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+/* Add a class for the hiding animation if you implement it in JS */
+.toast.hide {
+    animation: toast-out 0.5s ease-in forwards;
+}
