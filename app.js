@@ -154,6 +154,21 @@
         showToast('Trade successful', 'success');
     }
 
+    function resetPortfolio() {
+        if (confirm('Are you sure you want to reset your portfolio? This will delete all your holdings, transactions, and watchlist.')) {
+            // Clear portfolio-related data from localStorage
+            localStorage.removeItem('ctm_portfolio');
+            localStorage.removeItem('ctm_transactions');
+            localStorage.removeItem('ctm_watchlist');
+            
+            // Show a success message and reload the page
+            showToast('Portfolio has been reset.', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        }
+    }
+
     function showToast(msg, type='') {
         const t = $('#toast');
         if (!t) return alert(msg);
@@ -220,6 +235,7 @@
         $('#modalClose')?.addEventListener('click', ()=> $('#tradeModal').classList.remove('active'));
         document.getElementById('heroTradeBtn')?.addEventListener('click', ()=> { $$('.tab-content').forEach(t=>t.classList.remove('active')); $('#marketTab').classList.add('active'); });
         $('#profileBtn')?.addEventListener('click', ()=> { const m = $('#profileMenu'); m.classList.toggle('open'); });
+        $('#profileReset')?.addEventListener('click', resetPortfolio);
     }
 
     let currentCoin = null;
